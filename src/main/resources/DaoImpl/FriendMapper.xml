@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.websocket.Dao.FriendMapper">
+    <insert id="addFriend" useGeneratedKeys="true" keyProperty="id">
+        insert into friend(userId,friendId) values (#{userId},#{friendId})
+    </insert>
+
+    <select id="getFriendsId" resultType="int">
+        select friendId from friend where userId=#{userId}
+    </select>
+
+    <delete id="deleteFriend">
+        delete from friend where userId=#{userId} and friendId=#{friendId}
+    </delete>
+
+
+</mapper>
