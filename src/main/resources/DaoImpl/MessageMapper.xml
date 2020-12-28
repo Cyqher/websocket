@@ -44,6 +44,14 @@
         select distinct team_id from team_user where user_id=#{userId}
     </select>
 
+    <select id="getUserIdByTeamId" resultType="int">
+        select distinct user_id from team_user where team_id=#{teamId}
+    </select>
+
+    <select id="getNameByGrpId" resultType="String">
+        select name from team where id = #{groupId}
+    </select>
+
     <update id="updateState">
         update message set state=1 where from_user=#{senderId} and to_user=#{receiverId} and state=0
     </update>

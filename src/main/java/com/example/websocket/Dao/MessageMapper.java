@@ -24,7 +24,7 @@ public interface MessageMapper {
     public int addTeamMessage(GrpMsg grpMsg);
 
     public int addTeamMessageState(int messageId,int userId,int teamId,int state);
-    
+
     public int updateState(int senderId,int receiverId);
 
     public int updateTeamState(int teamId,int userId);
@@ -33,12 +33,16 @@ public interface MessageMapper {
 
     public List<Integer> getTeamIdsByUserId(int userId);
 
+    public List<Integer> getUserIdByTeamId(int teamId);
+
     public int sendInvitation(Invitation invitation);
-    
+
     public List<Integer> getUnreadSenderId(int receiverId);
 
     public List<Message> getRecent30Days(int toUser);
 
     public List<GrpMsg> getGroupRecent30Days(int groupId);
+
+    public String getNameByGrpId(int groupId);
 
 }

@@ -10,7 +10,11 @@ public interface MessageService {
 
     public ResponseVO getRecent30Days(int userId);
 
+    public ResponseVO getRecent(int userId);
+
     public ResponseVO getGroupRecent30Days(int userId);
+
+    public ResponseVO getGroups(int userId);
 
     public ResponseVO getAllInvitations(int toUser);
 

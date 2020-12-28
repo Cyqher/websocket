@@ -11,6 +11,7 @@ import com.example.websocket.VO.GroupAndMsg;
 import com.example.websocket.VO.InvitationVO;
 import com.example.websocket.VO.ResponseVO;
 import com.example.websocket.VO.UserAndMsg;
+import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -88,6 +89,57 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
+    public ResponseVO getRecent(int userId){
+        try{
+            List<Message> messages  = messageMapper.getRecent30Days(userId);
+            List<Integer> grps = messageMapper.getTeamIdsByUserId(userId);
+            List<Integer> friends = new ArrayList<>();
+            for(int grpId : grps){
+                List<Integer> temp = messageMapper.getUserIdByTeamId(grpId);
+                for(int uid:temp){
+                    if ((!friends.contains(uid))&&(uid!=userId)){
+                        friends.add(uid);
+                    }
+                }
+            }
+            Map<Integer, UserAndMsg> users = new HashMap<>();
+            for(int uid:friends){
+                User temp = accountMapper.selectUserById(uid);
+                UserAndMsg a = new UserAndMsg(temp.getId(),temp.getName());
+                users.put(uid,a);
+
+            }
+            for(Message message:messages){
+                UserAndMsg from = users.get(message.getFrom_user());
+                UserAndMsg to = users.get(message.getTo_user());
+                if(users!=null&&((from!=null&&from.getUserId()!=userId)||(to!=null&&to.getUserId()!=userId))){
+                    if(from!=null&&from.getUserId()!=userId){
+                        from.addMsg(message);
+                    }
+                    else if(to!=null&&to.getUserId()!=userId){
+                        to.addMsg(message);
+                    }
+                }else{
+                    User tmp = new User();
+                    if(message.getFrom_user()!=userId){
+                        tmp = accountMapper.selectUserById(message.getFrom_user());
+                    }else if(message.getTo_user()!=userId){
+                        tmp = accountMapper.selectUserById(message.getTo_user());
+                    }
+
+                    UserAndMsg a = new UserAndMsg(tmp.getId(),tmp.getName());
+                    users.put(tmp.getId(),a);
+                    users.get(tmp.getId()).addMsg(message);
+                }
+            }
+            return ResponseVO.buildSuccess(users);
+        }catch (Exception e){
+            e.printStackTrace();
+            return ResponseVO.buildFailure("Get failed");
+        }
+    }
+
+    @Override
     public ResponseVO getGroupRecent30Days(int userId){
         try{
             List<Integer> grps = messageMapper.getTeamIdsByUserId(userId);
@@ -109,6 +161,27 @@ public class MessageServiceImpl implements MessageService {
             return  ResponseVO.buildFailure("Get failed");
         }
 
+    }
+
+    @Override
+    public ResponseVO getGroups(int userId){
+        try{
+            List<Integer> grps = messageMapper.getTeamIdsByUserId(userId);
+            Map<Integer, GroupAndMsg> groupAndMsgs = new HashMap<>();
+            for(int grpId:grps){
+                List<GrpMsg> grpMsgs = messageMapper.getGroupRecent30Days(grpId);
+                String grpname = messageMapper.getNameByGrpId(grpId);
+                GroupAndMsg tmp = new GroupAndMsg(grpId,grpname);
+                for(GrpMsg g:grpMsgs){
+                    tmp.addMsg(g);
+                }
+                groupAndMsgs.put(grpId,tmp);
+            }
+            return ResponseVO.buildSuccess(groupAndMsgs);
+        }catch (Exception e){
+            e.printStackTrace();
+            return  ResponseVO.buildFailure("Get failed");
+        }
     }
 
     @Override

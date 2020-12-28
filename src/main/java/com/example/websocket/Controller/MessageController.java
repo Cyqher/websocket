@@ -36,9 +36,19 @@ public class MessageController {
         return messageService.getRecent30Days(userId);
     }
 
+    @GetMapping("/friends")
+    public ResponseVO getRecent(@RequestParam("userId")int userId){
+        return messageService.getRecent(userId);
+    }
+
     @GetMapping("/group30d")
     public ResponseVO getGroupRecent30Days(@RequestParam("userId")int userId){
         return messageService.getGroupRecent30Days(userId);
+    }
+
+    @GetMapping("/group")
+    public ResponseVO getGroups(@RequestParam("userId")int userId){
+        return messageService.getGroups(userId);
     }
 
     @GetMapping("/allInvitation")
