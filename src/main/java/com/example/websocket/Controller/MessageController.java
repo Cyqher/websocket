@@ -76,6 +76,8 @@ public class MessageController {
 
     @PostMapping("/sendGrpMsg")
     public ResponseVO sendGroupMessage(@RequestBody GrpMsgForm grpMsgForm) throws IOException {
+        System.out.println("here");
+        System.out.println(grpMsgForm.getContent());
         return webSocket.sendGroupMessage(grpMsgForm);
     }
 
